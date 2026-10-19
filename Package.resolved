@@ -1,5 +1,5 @@
 {
-  "originHash" : "8d9f9cc60d3476d874a016a08543cc659ad86fabbd4729379924bf1762d0b6e6",
+  "originHash" : "700b23f1863eb8044a6b2e7fb6eb3662bc4d9c1d426aa447da0c262694e61308",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -94,7 +94,7 @@
     {
       "identity" : "swift-file-logger",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/indigo-ce/swift-file-logger",
+      "location" : "https://github.com/indigo-stacks/swift-file-logger",
       "state" : {
         "revision" : "f8e09b9301a13415c1be9b6e21ef42974ee04036",
         "version" : "0.9.2"
