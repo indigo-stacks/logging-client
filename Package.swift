@@ -21,7 +21,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.23.1"),
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.10.0"),
     .package(url: "https://github.com/apple/swift-log", from: "1.6.4"),
-    .package(url: "https://github.com/indigo-ce/swift-file-logger", from: "0.9.2"),
+    .package(url: "https://github.com/indigo-stacks/swift-file-logger", from: "0.9.2"),
     .package(url: "https://github.com/kean/PulseLogHandler", from: "5.1.0"),
   ],
   targets: [
