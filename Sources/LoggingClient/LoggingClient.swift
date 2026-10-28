@@ -3,7 +3,6 @@ import DependenciesMacros
 import FileLogger
 import Foundation
 import Logging
-import PulseLogHandler
 
 @DependencyClient
 public struct LoggingClient: Sendable {
@@ -162,24 +161,7 @@ extension LoggingClient: DependencyKey {
     @Dependency(\.loggingConfigClient) var config
 
     LoggingSystem.bootstrap { label in
-      let consoleLogHandler = StreamLogHandler.standardOutput(label: label)
-      let pulseLogHandler = PersistentLogHandler(label: label)
-
-      do {
-        let fileLogHandler = try FileLogger(
-          label: label,
-          fileURL: try config.logFileURL(),
-          maxFileSize: try config.maxLogFileSize()
-        )
-
-        #if DEBUG
-          return MultiplexLogHandler([consoleLogHandler, fileLogHandler, pulseLogHandler])
-        #else
-          return fileLogHandler
-        #endif
-      } catch {
-        return consoleLogHandler
-      }
+      makeLogHandler(label: label, config: config)
     }
 
     return Self(
@@ -241,4 +223,34 @@ extension LoggingClient: DependencyKey {
       }
     )
   }()
+}
+
+/// Builds the log handler that `LoggingClient.liveValue` bootstraps for each label.
+///
+/// In DEBUG builds, it combines console, file, and `additionalLogHandlers` output.
+/// In other builds, it uses the file handler and `additionalLogHandlers`.
+/// If the file handler cannot be created, it uses console and `additionalLogHandlers` output.
+func makeLogHandler(label: String, config: LoggingConfigClient) -> any LogHandler {
+  let consoleLogHandler = StreamLogHandler.standardOutput(label: label)
+  let additionalLogHandlers = config.additionalLogHandlers(label)
+
+  do {
+    let fileLogHandler = try FileLogger(
+      label: label,
+      fileURL: try config.logFileURL(),
+      maxFileSize: try config.maxLogFileSize()
+    )
+
+    #if DEBUG
+      return MultiplexLogHandler([consoleLogHandler, fileLogHandler] + additionalLogHandlers)
+    #else
+      return additionalLogHandlers.isEmpty
+        ? fileLogHandler
+        : MultiplexLogHandler([fileLogHandler] + additionalLogHandlers)
+    #endif
+  } catch {
+    return additionalLogHandlers.isEmpty
+      ? consoleLogHandler
+      : MultiplexLogHandler([consoleLogHandler] + additionalLogHandlers)
+  }
 }
