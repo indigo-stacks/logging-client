@@ -19,10 +19,10 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.23.1"),
+    .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.3.0"),
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.10.0"),
     .package(url: "https://github.com/apple/swift-log", from: "1.6.4"),
     .package(url: "https://github.com/indigo-ce/swift-file-logger", from: "0.9.2"),
-    .package(url: "https://github.com/kean/PulseLogHandler", from: "5.1.0"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -34,13 +34,16 @@ let package = Package(
         .product(name: "DependenciesMacros", package: "swift-dependencies"),
         .product(name: "Logging", package: "swift-log"),
         .product(name: "FileLogger", package: "swift-file-logger"),
-        .product(name: "PulseLogHandler", package: "PulseLogHandler"),
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
       ]
     ),
     .testTarget(
       name: "LoggingClientTests",
-      dependencies: ["LoggingClient"]
+      dependencies: [
+        "LoggingClient",
+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+        .product(name: "Logging", package: "swift-log"),
+      ]
     ),
   ],
   swiftLanguageModes: [.v6]

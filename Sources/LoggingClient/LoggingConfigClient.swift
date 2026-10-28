@@ -13,6 +13,26 @@ public struct LoggingConfigClient: Sendable {
   public var logger: @Sendable () throws -> Logger
   public var logFileURL: @Sendable () throws -> URL
   public var maxLogFileSize: @Sendable () throws -> UInt64
+  /// Extra log handlers that `LoggingClient.liveValue` adds for each logger label.
+  ///
+  /// Use it to plug in optional handlers, such as Pulse, without a hard dependency in this package.
+  public var additionalLogHandlers: @Sendable (_ label: String) -> [any LogHandler] = { _ in [] }
+}
+
+extension LoggingConfigClient {
+  /// Creates a configuration without additional log handlers.
+  public init(
+    logger: @escaping @Sendable () throws -> Logger,
+    logFileURL: @escaping @Sendable () throws -> URL,
+    maxLogFileSize: @escaping @Sendable () throws -> UInt64
+  ) {
+    self.init(
+      logger: logger,
+      logFileURL: logFileURL,
+      maxLogFileSize: maxLogFileSize,
+      additionalLogHandlers: { _ in [] }
+    )
+  }
 }
 
 extension DependencyValues {
